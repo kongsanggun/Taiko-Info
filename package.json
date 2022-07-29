@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prebuild" : "npm run tailwind:build",
     "build": "react-scripts build",
     "start": "nodemon index.js",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
