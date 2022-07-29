@@ -1,2 +1,3 @@
 [build]
-command = "CI= npm run dev"
+publish = "dev"
+command = "npm run dev"
