@@ -46,9 +46,16 @@ function App() {
     loginerror(false);
     setIsgood(false);
     //console.log("검색 키워드: " + keyword);
-    fetch(`api/data?keyword=${keyword}&password=${password}`)
+    fetch(`api/data?keyword=${keyword}&password=${password}`, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
       .then((res) => {
         return res.json();
+        throw new Error(
+          `This is an HTTP error: The status is ${res.status}`
+        );
       })
       .then((data) => {
 
@@ -71,7 +78,11 @@ function App() {
         setData(songdata);
         setIsOnLoading(false);
         //console.log(data);
+      }).catch((err) => {
+        console.log(err.message);
+        setIsOnLoading(false);
       });
+      ;
   };
 
   function CClick() {
