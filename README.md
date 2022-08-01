@@ -150,72 +150,72 @@ css 스타일은 보기 쉽게 중앙으로 가로 방향으로 일렬로 정렬
 #### 난이도 정보 만들기
 
 난이도 정보는 왕관이랑 극을 기준으로 나뉜 기록 테이블로 구성되어있다.
-
 우선 해당 조건에 맞는 데이터 별로 나뉘어준다.
 
 ``` typescript
 const donerfullcombo = Data_tmp.filter((item: any, index: number) => (item.crown > 3))
-    const fullcombo = Data_tmp.filter((item: any, index: number) => (item.crown > 2))
-    const clear = Data_tmp.filter((item: any, index: number) => (item.crown > 1))
+const fullcombo = Data_tmp.filter((item: any, index: number) => (item.crown > 2))
+const clear = Data_tmp.filter((item: any, index: number) => (item.crown > 1))
 
-    const scored_6 = Data_tmp.filter((item: any, index: number) => (item.k_score <= item.score))
-    const scored_5 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 50000 && item.k_score > item.score))
-    const scored_4 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 100000 && item.k_score - item.score > 50000))
-    const scored_3 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 200000 && item.k_score - item.score > 100000))
-    const scored_2 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 300000 && item.k_score - item.score > 200000))
-    const scored_1 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 400000 && item.k_score - item.score > 300000))
-    const scored_0 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 500000 && item.k_score - item.score > 400000))
+const scored_6 = Data_tmp.filter((item: any, index: number) => (item.k_score <= item.score))
+const scored_5 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 50000 && item.k_score > item.score))
+const scored_4 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 100000 && item.k_score - item.score > 50000))
+const scored_3 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 200000 && item.k_score - item.score > 100000))
+const scored_2 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 300000 && item.k_score - item.score > 200000))
+const scored_1 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 400000 && item.k_score - item.score > 300000))
+const scored_0 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 500000 && item.k_score - item.score > 400000))
 
 ```
 
 그 다음 기록 정보가 포함된 테이블 컴포넌트를 제작한다. 어느 정도 도달하였는지 알기 쉽도록 왕관 테이블 오른쪽에 위치한 바형식의 그래프 또한 제작한다.
 
 ``` typescript
-<div className='level_info_table_div' style = {Onh8 ? {visibility: "hidden"} : {visibility: "visible"}}>
-            <table className="level_info_table">
-              <tbody>
-                <tr>
-                  <th className="level_info_table_0"> 왕관 </th>
-                  <th className="level_info_table_1"> 달성 </th>
-                  <th className="level_info_table_2"> 미달성 </th>
-                  <th className="level_info_table_3">  </th>
-                  <th> 진행도 </th>
-                </tr>
-                <tr>
-                  <td className="level_info_table_0"> <img src="img/crown2.png" height={'30px'} /> </td>
-                  <td className="level_info_table_1"> {clear.length} </td>
-                  <td className="level_info_table_2"> {Data_tmp.length - clear.length} </td>
-                  <th className="level_info_table_3"> {(clear.length / Data_tmp.length * 100).toFixed(1) + "%"} </th>
-                  <td>
+<div className='level_info_table_div'>
+    <table className="level_info_table">
+        <tbody>
+            <tr>
+                <th className="level_info_table_0"> 왕관 </th>
+                <th className="level_info_table_1"> 달성 </th>
+                <th className="level_info_table_2"> 미달성 </th>
+                <th className="level_info_table_3">  </th>
+                <th> 진행도 </th>
+            </tr>
+            <tr>
+                <td className="level_info_table_0"> <img src="img/crown2.png" height={'30px'} /> </td>
+                <td className="level_info_table_1"> {clear.length} </td>
+                <td className="level_info_table_2"> {Data_tmp.length - clear.length} </td>
+                <td className="level_info_table_3"> {(clear.length / Data_tmp.length * 100).toFixed(1) + "%"} </td>
+            	<td>
+                	<div className="Progress">
+                		<div className="CBar" style={{ width: `${(clear.length / Data_tmp.length) * 100}%` }} title = { clear.length + " / " + Data_tmp.length }></div>
+            		</div>
+            	</td>
+            </tr>
+            <tr>
+                <td className="level_info_table_0"> <img src="img/crown3.png" height={'30px'} /> </td>
+                <td className="level_info_table_1"> {fullcombo.length} </td>
+                <td className="level_info_table_2"> {Data_tmp.length - fullcombo.length} </td>
+                <td className="level_info_table_3"> {(fullcombo.length / Data_tmp.length * 100).toFixed(1) + "%"}</td>
+                <td>
                     <div className="Progress">
-                      <div className="CBar" style={{ width: `${(clear.length / Data_tmp.length) * 100}%` }} title = { clear.length + " / " + Data_tmp.length }></div>
+                      	<div className="FCBar" style={{ width: `${(fullcombo.length / Data_tmp.length) * 100}%` }} title = { fullcombo.length + " / " + Data_tmp.length }></div>
                     </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="level_info_table_0"> <img src="img/crown3.png" height={'30px'} /> </td>
-                  <td className="level_info_table_1"> {fullcombo.length} </td>
-                  <td className="level_info_table_2"> {Data_tmp.length - fullcombo.length} </td>
-                  <th className="level_info_table_3"> {(fullcombo.length / Data_tmp.length * 100).toFixed(1) + "%"}</th>
-                  <td>
+                </td>
+            </tr>
+            <tr>
+                <td className="level_info_table_0"> <img src="img/crown4.png" height={'30px'} /> </td>
+                <td className="level_info_table_1"> {donerfullcombo.length} </td>
+                <td className="level_info_table_2"> {Data_tmp.length - donerfullcombo.length} </td>
+                <td className="level_info_table_3"> {(donerfullcombo.length / Data_tmp.length * 100).toFixed(1) + "%"} </td>
+                <td>
                     <div className="Progress">
-                      <div className="FCBar" style={{ width: `${(fullcombo.length / Data_tmp.length) * 100}%` }} title = { fullcombo.length + " / " + Data_tmp.length }></div>
+                      	<div className="DFCBar" style={{ width: `${(donerfullcombo.length / Data_tmp.length) * 100}%` }} title = { donerfullcombo.length + " / " + Data_tmp.length }></div>
                     </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="level_info_table_0"> <img src="img/crown4.png" height={'30px'} /> </td>
-                  <td className="level_info_table_1"> {donerfullcombo.length} </td>
-                  <td className="level_info_table_2"> {Data_tmp.length - donerfullcombo.length} </td>
-                  <th className="level_info_table_3"> {(donerfullcombo.length / Data_tmp.length * 100).toFixed(1) + "%"} </th>
-                  <td>
-                    <div className="Progress">
-                      <div className="DFCBar" style={{ width: `${(donerfullcombo.length / Data_tmp.length) * 100}%` }} title = { donerfullcombo.length + " / " + Data_tmp.length }></div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 ```  
 
 막대 바용 css 
@@ -267,25 +267,25 @@ const donerfullcombo = Data_tmp.filter((item: any, index: number) => (item.crown
 ``` typescript
 
 React.useEffect(() => {
-      const radius = 30; 
-      const diameter = 2 * Math.PI * radius;
+    const radius = 30; 
+    const diameter = 2 * Math.PI * radius;
       
-      const colors = ['#37D6EC', '#8551D1', '#EA6A8F', '#E1AA02', '#6B70A2', '#99441F', '#D3D3D3'];
-      const im_href = ["img/score_rank_8.png", "img/score_rank_7.png", "img/score_rank_6.png", "img/score_rank_5.png", "img/score_rank_4.png", "img/score_rank_3.png", "img/score_rank_2.png"];
-      const dataset = [scored_6.length, scored_5.length, scored_4.length, scored_3.length, scored_2.length, scored_1.length, scored_0.length];
-      const total = Data_tmp.length;
+    const colors = ['#37D6EC', '#8551D1', '#EA6A8F', '#E1AA02', '#6B70A2', '#99441F', '#D3D3D3'];
+    const im_href = ["img/score_rank_8.png", "img/score_rank_7.png", "img/score_rank_6.png", "img/score_rank_5.png", "img/score_rank_4.png", "img/score_rank_3.png", "img/score_rank_2.png"];
+    const dataset = [scored_6.length, scored_5.length, scored_4.length, scored_3.length, scored_2.length, scored_1.length, scored_0.length];
+    const total = Data_tmp.length;
 
-      const acc = dataset.reduce((arr, v, i) => {
+    const acc = dataset.reduce((arr, v, i) => {
         const last = arr[arr.length - 1];
         return [...arr, last + v];
-      }, [0]);
+    }, [0]);
 
-      const svg = document.getElementById('svg');
-      dataset.forEach((data, i) => {
-        const ratio = data / total;
-        const fillSpace = diameter * ratio;
-        const emptySpace = diameter - fillSpace;
-        const offset = ((acc[i] / total) - 0.25) * diameter ;
+    const svg = document.getElementById('svg');
+    dataset.forEach((data, i) => {
+    	const ratio = data / total;
+    	const fillSpace = diameter * ratio;
+    	const emptySpace = diameter - fillSpace;
+    	const offset = ((acc[i] / total) - 0.25) * diameter ;
 
         if(data !== 0) {
           const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -324,18 +324,89 @@ React.useEffect(() => {
           svg.appendChild(circle);
           if((dataset[i] / total) >= 0.045) {svg.appendChild(im)};
         }
-      
-      });
+    });
 
 ```
 
 #### 서열표 표 만들기 
 
+서열표 표는 곡 정보를 토대로 표시하는 식으로 제작하였다.
 
+``` typescript
+            return (
+                <div className="songs" key={index}>
+                    <div className="song_tmp" title = {(item.id < 4000) ? item.title + " > Play times : " + item.play_times : ""}>
+                        <div className="genre">
+                            {(128 & item.genre) ? <div className="namco" /> : ""}
+                            {(64 & item.genre) ? <div className="classical" /> : ""}
+                            {(32 & item.genre) ? <div className="var" /> : ""}
+                            {(16 & item.genre) ? <div className="games" /> : ""}
+                            {(8 & item.genre) ? <div className="vocal" /> : ""}
+                            {(4 & item.genre) ? <div className="ani" /> : ""}
+                            {(2 & item.genre) ? <div className="kids" /> : ""}
+                            {(1 & item.genre) ? <div className="pop" /> : ""}
+                        </div> {/* 장르 */}
+                        <div className="song_tmp2">
+                            <div className="name">
+                                <div className="name2">
+                                    <div className="Title_col"> {/* 제목 */}
+                                        {item.id > 10000 ? <div className="Title_tmp"> {item.title} </div> : item.id > 4000 ? <div className="Title_M"> {item.title} </div> : item.id > 2000 ? <div className="Title_Ura"> {item.title} </div> : <div className="Title"> {item.title} </div>}
+                                        <div className="do_jo">
+                                            {(item.do_jo === 1) ? <img className="do_jo_img" src="img/1dan.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 2) ? <img className="do_jo_img" src="img/2dan.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 3) ? <img className="do_jo_img" src="img/3dan.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 4) ? <img className="do_jo_img" src="img/4dan.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 5) ? <img className="do_jo_img" src="img/5dan.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 6) ? <img className="do_jo_img" src="img/6dan.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 7) ? <img className="do_jo_img" src="img/7dan.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 8) ? <img className="do_jo_img" src="img/8dan.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 9) ? <img className="do_jo_img" src="img/9dan.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 10) ? <img className="do_jo_img" src="img/10dan.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 11) ? <img className="do_jo_img" src="img/kuroto.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 12) ? <img className="do_jo_img" src="img/meijin.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 13) ? <img className="do_jo_img" src="img/chojin.png" width={'100%'} /> : ""}
+                                            {(item.do_jo === 14) ? <img className="do_jo_img" src="img/tatsujin.png" width={'100%'} /> : ""}
+                                        </div> {/* 단위 과제곡 */}
+                                    </div>
+                                    <div className="Subtitle_col"> {/* 부제목 */}
+                                        <div className={item.title.length >= 20 ? "Subtitle_long" : item.title.length >= 11 ? "Subtitle_mid" : "Subtitle"}> {item.sub_title_kor}</div>
+                                        <div className="Bottom_Right"> {item.notice & 4 ? <div className='individual' /> : ""}{item.notice & 2 ? <div className='first_play' /> : ""}{item.notice & 1 ? <div className='full_combo' /> : ""} </div> {/* 기타 항목 */}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="my_data"> {/* 플레이어의 기록 */}
+                                <div className="crown">
+                                    {(item.crown === 4) ? <img src="img/crown4.png" width={'100%'} /> : ""}
+                                    {(item.crown === 3) ? <img src="img/crown3.png" width={'100%'} /> : ""}
+                                    {(item.crown === 2) ? <img src="img/crown2.png" width={'100%'} /> : ""}
+                                    {(item.crown === 1) ? <img src="img/crown1.png" width={'100%'} /> : ""}
+                                </div> {/* 왕관 */}
+                                <div className={(item.k_score <= item.score) ? "score score_6" : ((item.k_score - item.score <= 50000) ? "score score_5" : ((item.k_score - item.score <= 100000) ? "score score_4" : ((item.k_score - item.score <= 200000) ? "score score_3" : ((item.k_score - item.score <= 300000) ? "score score_2" : (item.k_score - item.score <= 400000) ? "score score_1" : (item.k_score - item.score <= 500000) ? "score score_0" : "score score_none"))))}>
+                                    {(item.crown !== 0) ? item.score : ""}
+                                </div> {/* 점수 */}
+                                <div className="score_icon">
+                                    {(item.k_score <= item.score) ? <img src="img/score_rank_8.png" width={'100%'} /> : ""}
+                                    {(item.k_score > item.score && item.k_score - item.score <= 50000) ? <img src="img/score_rank_7.png" width={'100%'} /> : ""}
+                                    {(item.k_score - item.score > 50000 && item.k_score - item.score <= 100000) ? <img src="img/score_rank_6.png" width={'100%'} /> : ""}
+                                    {(item.k_score - item.score > 100000 && item.k_score - item.score <= 200000) ? <img src="img/score_rank_5.png" width={'100%'} /> : ""}
+                                    {(item.k_score - item.score > 200000 && item.k_score - item.score <= 300000) ? <img src="img/score_rank_4.png" width={'100%'} /> : ""}
+                                    {(item.k_score - item.score > 300000 && item.k_score - item.score <= 400000) ? <img src="img/score_rank_3.png" width={'100%'} /> : ""}
+                                    {(item.k_score - item.score > 400000 && item.k_score - item.score <= 500000) ? <img src="img/score_rank_2.png" width={'100%'} /> : ""}
+                                </div> {/* 극 */}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+```
 
 ### 연동 기능
 
+
+
 ### Heroku로 배포
+
+
 
 ## 5. 기타 
 
