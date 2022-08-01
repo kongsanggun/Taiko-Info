@@ -2,15 +2,16 @@
 
 ## 0. 목차 
 
-+ 링크 및 실행 방법
-+ 제작 동기
-+ 사용 언어
-+ 제작 순서
-	+ 프로젝트 초기화
-	+ Front End
-	+ 연동 기능
-	+ Heroku로 배포
-+ 기타 후기
++ 링크 및 실행 방법(https://github.com/kongsanggun/Taiko-Info#1-%EB%A7%81%ED%81%AC-%EB%B0%8F-%EC%8B%A4%ED%96%89-%EB%B0%A9%EB%B2%95)
++ 제작 동기(https://github.com/kongsanggun/Taiko-Info#2-%EC%A0%9C%EC%9E%91-%EB%8F%99%EA%B8%B0)
++ 사용 언어(https://github.com/kongsanggun/Taiko-Info#3-%EC%82%AC%EC%9A%A9-%EC%96%B8%EC%96%B4)
++ 제작 순서(https://github.com/kongsanggun/Taiko-Info#4-%EC%A0%9C%EC%9E%91-%EC%88%9C%EC%84%9C)
+	+ 프로젝트 초기화(https://github.com/kongsanggun/Taiko-Info#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%B4%88%EA%B8%B0%ED%99%94)
+	+ Front End(https://github.com/kongsanggun/Taiko-Info#front-end)
+	+ 연동 기능(https://github.com/kongsanggun/Taiko-Info#%EC%97%B0%EB%8F%99-%EA%B8%B0%EB%8A%A5)
+	+ Heroku로 배포(https://github.com/kongsanggun/Taiko-Info#heroku%EB%A1%9C-%EB%B0%B0%ED%8F%AC)
++ 기타 후기(https://github.com/kongsanggun/Taiko-Info#5-%EA%B8%B0%ED%83%80)
++ 참조 링크(https://github.com/kongsanggun/Taiko-Info#6-%EC%B0%B8%EA%B3%A0)
 
 ## 1. 링크 및 실행 방법
 
