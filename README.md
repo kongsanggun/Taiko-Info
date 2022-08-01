@@ -1,4 +1,9 @@
-# 태고 서열표 웹 만들기
+# 태고 서열표 웹
+
+[](https://github.com/kongsanggun/Taiko-Info/readme_img/1.png)
+[](https://github.com/kongsanggun/Taiko-Info/readme_img/2.png))
+
+> 화면 미리보기
 
 ## 0. 목차 
 
@@ -6,8 +11,8 @@
 + [제작 동기](https://github.com/kongsanggun/Taiko-Info#2-%EC%A0%9C%EC%9E%91-%EB%8F%99%EA%B8%B0)
 + [사용 언어](https://github.com/kongsanggun/Taiko-Info#3-%EC%82%AC%EC%9A%A9-%EC%96%B8%EC%96%B4)
 + [제작 순서](https://github.com/kongsanggun/Taiko-Info#4-%EC%A0%9C%EC%9E%91-%EC%88%9C%EC%84%9C)
-	+ [프로젝트 초기화](https://github.com/kongsanggun/Taiko-Info#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%B4%88%EA%B8%B0%ED%99%94)
-	+ [Front End](https://github.com/kongsanggun/Taiko-Info#front-end)
+	+ [프로젝트 만들기 & 초기화](https://github.com/kongsanggun/Taiko-Info#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%B4%88%EA%B8%B0%ED%99%94)
+	+ [사용자 화면 만들기](https://github.com/kongsanggun/Taiko-Info#front-end)
 	+ [연동 기능](https://github.com/kongsanggun/Taiko-Info#%EC%97%B0%EB%8F%99-%EA%B8%B0%EB%8A%A5)
 	+ [Heroku로 배포](https://github.com/kongsanggun/Taiko-Info#heroku%EB%A1%9C-%EB%B0%B0%ED%8F%AC)
 + [기타 후기](https://github.com/kongsanggun/Taiko-Info#5-%EA%B8%B0%ED%83%80)
@@ -19,33 +24,57 @@
 
 > Heroku의 응답 시간 제한으로 인하여 현재 연동 기능을 대거 축소하였다.
 
+### 코드를 다운 받고 로컬로 실행하는 방법 
 
-#### 코드를 다운 받고 로컬로 실행하는 방법 
-
-우선 다음과 같은 패키지를 다운 받는다.
+우선 터미널에서 다음과 같은 명령어를 입력하세요.
 ```
+cd 다운 받은 경로
+npm i react-scripts
 npm i express
 npm i nodemon
 npm i puppeteer
 ```
-실행 명령어는 다음과 같다.
+웹 실행 명령어입니다.
 ```
 npm run dev
 ```
 
 ## 2. 제작 동기
 
-태고의 달인 비공식 서열표를 이전 포토샵으로 작업하는 것과 다르게 좀 더 쉽게 정보를 수정하거나 바로 반영이 되는 웹의 방식으로 개발을 하였다. 또한 사용자가 일일히 성적을 체크하는 것이 아닌 동더히로바를 통하여 자동적으로 곡의 기록을 표시해 주는 연동 서비스를 추가하였다.
+아케이드 리듬게임으로 서비스되고 있는 태고의 달인이라는 게임의 비공식 서열표를 이전 포토샵으로 수작업으로 수정하는 것을 좀 더 웹을 통하여 자동적으로 반영이 되는 방식으로 개발을 하였다. 또한 사용자가 일일히 각 곡의 성적을 체크하는 것이 아닌 자동적으로 곡의 기록을 표시해 주는 연동 서비스를 추가하였다.
 
 ## 3. 사용 언어
 
-사용자에게 보여줄 Front End는 Typescirpt로 이루어진 React로 정하였고, 연동 기능에 사용할 서버는 Express와 정보 수집을 도와줄 Puppeteer를 사용하였다. 
+우선 각 곡의 정보는 json형식으로 진행하였다. 곡의 데이터 형식은 다음과 같다.
+``` JSON
+[
+    {
+        "id": 79, // 곡 고유 아이디
+        "title": "天国と地獄 序曲", // 곡 제목
+        "sub_title_kor": "천국과 지옥 서곡", 
+        "sub_title_eng": null,
+        "level": 6, // 레벨
+        "ranked": 2, // 동 레벨 내의 난이도
+        "ranked_idx": 0,
+        "genre": 66, // 장르
+        "notice": 0, // 참고
+        "do_jo": 0,  // 단위 과제곡 표시
+        "k_score": 1004180, // 극 점수 (0일시 1000000)
+        "score": 0, // 극
+        "crown": 0, // 왕관
+        "play_times": 0 // 플레이 횟수
+    },
+]
+```
+
+또한 사용자에게 보여줄 화면은 컴포먼트를 만들어서 쉼게 사용할 수 있는 React로 정하였고, 연동 서비스에 사용할 서버는 Express와 정보 수집을 도와줄 Puppeteer를 사용하였다. 
+특히 Puppeteer 같은 경우 Handless 기능이 있어서 자동화된 정보 수집에 효과적이었다.
 
 ## 4. 제작 순서
 
-### 프로젝트 초기화
+### 프로젝트 만들기 & 초기화
 
-크게 서버용 파일을 상위로 하여 그 안에 사용자용 파일이 있는 형식으로 제작하였다.
+프로젝트의 파일 형식은 서버용 파일을 상위로 하여 그 안에 사용자용 파일이 있는 형식으로 제작하였다.
 
 ```
 mkdir my-app
@@ -53,11 +82,55 @@ cd my-app
 echo node_modules > .gitignore
 npm init -y
 npm install express nodemon concurrently
+```
+> 서버용 파일 만들기
 
+```
 create-react-app client --use-npm --template typescript
 ```
+> 사용자용 React 파일 만들기
+
+서버용 파일에서 서버로 사용할 index.js 파일을 생성하였다.
 
 ``` js
+const express = require("express");
+const app = express();
+
+const port = process.env.PORT || 5000;
+app.listen(port);
+
+app.use("/api/data", function (req, res) {
+  res.json({ greeting: "Hello World" });
+});
+
+console.log(`server running at http ${port}`);
+```
+
+사용자용 파일에서 프록시를 설정하였다.
+
+```
+cd 사용자용 파일
+npm install http-proxy-middleware
+```
+> 터미널
+
+``` js
+const { createProxyMiddleware } = require("http-proxy-middleware");
+
+module.exports = function (app) {
+  app.use(
+    createProxyMiddleware("/api/data", {
+      target: "http://localhost:5000",
+      changeOrigin: true,
+    })
+  );
+};
+```
+> src/setupProxy.js
+
+마지막으로 서버와 사용자가 동시에 시작될 수 있게 서버 파일의 package.json을 다음과 같이 수정하였다.
+
+``` JSON
 "scripts": {
   "start": "nodemon index.js",
   "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
@@ -66,7 +139,7 @@ create-react-app client --use-npm --template typescript
 }
 ```
 
-### Front End
+### 사용자 화면 만들기
 
 사용자에게 보여줄 웹 화면은 크게 난이도 버튼하고 각 난이도 별의 정보 그리고 서열표 표로 나뉠 수 있다. 
 
