@@ -43,6 +43,12 @@ npm run dev
 
 아케이드 리듬게임으로 서비스되고 있는 태고의 달인이라는 게임의 비공식 서열표를 이전 포토샵으로 수작업으로 수정하는 것을 좀 더 웹을 통하여 자동적으로 반영이 되는 방식으로 개발을 하였다. 또한 사용자가 일일히 각 곡의 성적을 체크하는 것이 아닌 자동적으로 곡의 기록을 표시해 주는 연동 서비스를 추가하였다.
 
+![](https://github.com/kongsanggun/Taiko-Info/readme_img/3.png)
+![](https://github.com/kongsanggun/Taiko-Info/readme_img/4.png)
+![](https://github.com/kongsanggun/Taiko-Info/readme_img/5.png)
+
+> 연동 서비스 적용 예시
+
 ## 3. 사용 언어
 
 우선 각 곡의 정보는 json형식으로 진행하였다. 곡의 데이터 형식은 다음과 같다.
@@ -536,13 +542,64 @@ return (
     </div>
 )
 ```
+#### 반응형 웹
+
+브라우저의 width 값에 따라 사용자의 화면을 변경하게 만들었다.
+
+``` css
+
+@media screen and (max-width : 720px) {
+  .score_icon {
+    width: 20%;
+  }
+  .score {
+    width: 60%;
+  }
+  .crown {
+    width: 20%;
+  }
+  .do_jo_img{
+    width: 17px;
+    height: 17px;
+  }
+  .Subtitle_long {
+    visibility: hidden;
+  }
+  .level_info {
+    height: 1180px;
+  }
+}
+
+``` 
 
 ### 연동 기능
 
-연동기능은 puppeteer를 이용하였다. 우선 연동시킬 계정 이메일과 비밀번호를 서버로 보내기 위하여 다음과 같이 작성해준다.
+#### 팝업 기능과 입력 컴포넌트 만들기
 
-``` typescript
+연동 기능 화면에 사용할 팝업 컴포넌트와 그 안에 정보를 입력할 입력 컴포넌트를 다음과 같이 생성하였다.
 
+``` tsx
+const Popup = () => {
+  return (
+    <div id="popup">
+      <div id="popup_back" onClick={() => { if (!isOnLoading) { handlePopup(); loginerror(false); setIsgood(false); } }}>
+      </div>
+      <div className="popup_main">
+        {isOnLoading ? "" : <Popup_Top />}
+        {isOnLoading ? "" : <Popup_2 />}
+        {isOnLoading ? "" : <Popup_1 />}
+        {isOnLoading ? "" : <SearchForm getData={getData} />}
+        <SearchLoading isOnLoading={isOnLoading} />
+        {isloginerror ? <div className="popup_error">로그인 에러</div> : ""}
+        {isgood ? <div className="popup_good"> 기록 불러오기 성공! </div> : ""}
+      </div>
+    </div>
+  );
+}
+```
+> 팝업 화면
+
+``` tsx
 import React, { useState } from "react";
 
 const SearchForm = (props: { getData: any }) => {
@@ -550,43 +607,29 @@ const SearchForm = (props: { getData: any }) => {
   const [Id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [isinputerror, setinputerror] = useState(false)
-
   return (
     <div>
       <div className="form">
         <div className="email_form">
           <div> 이메일 </div>
-          <input
-            type="text"
-            className="form-text"
+          <input type="text" className="form-text"
             onChange={(e: any) => {
               setId(e.target.value);
-            }}
-          />
+          }} />
         </div>
         <div className="password_form">
           <div> 비밀번호 </div>
-          <input
-            type="password"
-            className="form-text"
+          <input type="password" className="form-text"
             onChange={(e: any) => {
               setPassword(e.target.value);
-            }}
-          />
+          }} />
         </div>
-        <button
-          type="button"
-          className="form-btn"
+        <button type="button" className="form-btn"
           onClick={() => {
             setinputerror(false)
-            if (Id && password) {
-              getData(Id, password);
-            }
+            if (Id && password) {getData(Id, password);}
             else { setinputerror(true) }
-          }}
-        >
-          search
-        </button>
+        }}> search </button>
       </div>
       {isinputerror ? <div className = "popup_error"> 이메일과 비밀번호를 입력해주세요 </div> : ""}
     </div>
@@ -595,87 +638,162 @@ const SearchForm = (props: { getData: any }) => {
 
 export default SearchForm;
 
-``` 
+```
+> 입력 화면
 
-``` typescript
+입력 화면 화면에서 이메일과 비밀번호를 입력한 후 버튼을 클릭하면 해당 정보가 RankingData.tsx에 있는 getData() 에게 전달되어진다. 단, 하나라도 입력되지 않는다면 화면에 isinputerror가 뜨게 만들었다. 
+
+``` tsx
 
 const getData = (keyword: string, password: string) => {
 setIsOnLoading(true);
 loginerror(false);
 setIsgood(false);
-//console.log("검색 키워드: " + keyword);
-fetch(`api/data?keyword=${keyword}&password=${password}`, {
-    headers: {
-    'Accept': 'application/json'
-    }
-})
-    .then((res) => {
-        return res.json();
-        throw new Error(
-          `This is an HTTP error: The status is ${res.status}`
-        );
-      })
+
+fetch(`api/data?keyword=${keyword}&password=${password}`)
+  .then((res) => {
+    return res.json();
+    })
     .then((data) => {
-
-        if (data === null) {
-          loginerror(true);
-        }
-        else {
-          songdata.map((item1: any, idx: number) => {
-            data.map((item2: any, idx: number) => {
-              if (item1.id === item2.id) {
-                item1.score = item2.score;
-                item1.crown = item2.crown;
-                item1.play_times = item2.play_times;
-              }
-            })
+      if (data === null) {
+        loginerror(true);
+      }
+      else {
+        songdata.map((item1: any, idx: number) => {
+          data.map((item2: any, idx: number) => {
+            if (item1.id === item2.id) {
+              item1.score = item2.score;
+              item1.crown = item2.crown;
+              item1.play_times = item2.play_times;
+            }
           })
-          setIsgood(true);
-        }
-
-        setData(songdata);
-        setIsOnLoading(false);
-        //console.log(data);
-    }).catch((err) => {
-        console.log(err.message);
-        setIsOnLoading(false);
-    });
-    ;
+        })
+        setIsgood(true);
+      }
+      setData(songdata);
+      setIsOnLoading(false);
+  })
 };
 
 ``` 
+서버에 요청를 보낸 결과는 곡 정보에 추가하도록 작성하였다. 
 
-연동기능은 puppeteer를 이용하여 아래 내용을 추가해 주었다.
+#### 연동기능 만들기
+
+연동기능은 index.js 에서 puppeteer를 추가하여 작성하였다.
 
 ``` js
 
 // puppeteer 모듈 불러오기
 const puppeteer = require("puppeteer");
 
-/**
- * 브라우저 오픈 함수
- * @param {string} keyword 검색 키워드
- * @return {Array} 검색 결과
- */
+@param {string} keyword 검색 키워드
+@return {Array} 검색 결과
+
 async function openBrowser(keyword, password) {
 
   let AllData = [];
-  let ura = [9, 15, 45, 49, 60, 73, 80, 92, 95, 100, 109, 118, 135, 139, 140, 149, 150, 153, 154, 156, 160, 163, 164, 178, 181, 184, 187, 200, 202, 203, 218, 221, 222, 231, 253, 254, 256, 264, 266, 270, 271, 272, 273, 274, 275, 276, 277, 278, 283, 284, 309, 310, 324, 348, 357, 361, 366, 368, 371, 399, 400, 402, 403, 405, 414, 417, 422, 425, 433, 447, 448, 451, 470, 478, 480, 481, 482, 487, 493, 504, 506, 507, 511, 519, 520, 537, 539, 551, 553, 579, 580, 606, 626, 645, 646, 648, 652, 664, 671, 676, 681, 683, 689, 700, 711, 716, 717, 721, 730, 735, 736, 741, 771, 775, 776, 793, 795, 804, 811, 816, 819, 824, 831, 834, 842, 845, 856, 866, 868, 876, 882, 884, 898, 911, 920, 926, 936, 938, 951, 954, 956, 958, 959, 960, 972, 981, 993, 997, 1009, 1020, 1027, 1035, 1043, 1046, 1058, 1067, 1072, 1080, 1082, 1084, 1096, 1097, 1111, 1112, 1113];
-  let errors = [4, 23, 24, 29, 30, 46, 50, 54, 57, 75, 76, 77, 78, 102, 104, 119, 129, 130, 143, 145, 147, 158, 162, 165, 170, 172, 174, 175, 176, 185, 188, 189, 192, 195, 198, 199, 201, 206, 216, 217, 229, 232, 234, 235, 240, 244, 249, 258, 262, 263, 289, 292, 295, 320, 326, 327, 328, 329, 330, 334, 339, 369, 370, 373, 376, 379, 382, 409, 424, 439, 457, 473, 475, 476, 485, 486, 490, 494, 508, 509, 521, 522, 528, 529, 531, 532, 533, 542, 562, 563, 564, 581, 582, 583, 584, 589, 590, 597, 598, 599, 600, 601, 602, 603, 619, 620, 622, 633, 634, 636, 638, 643, 655, 656, 657, 658, 661, 662, 667, 669, 670, 674, 690, 691, 692, 708, 710, 712, 718, 729, 731, 743, 752, 768, 769, 772, 782, 783, 787, 788, 789, 791, 802, 806, 807, 810, 812, 825, 827, 829, 830, 832, 836, 837, 838, 847, 848, 853, 863, 899, 900, 901, 902, 903, 904, 912, 1001, 1025, 1107];
   
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox"
-    ]
-  });
+  const browser = await puppeteer.launch({headless: false});
   // 브라우저 열기
   const page = await browser.newPage();
-  await page.setRequestInterception(true);
 
-  // 페이지 옵션
-  page.on('request', (req) => {
+  // 포탈로 이동
+  await page.goto("https://donderhiroba.jp/login.php");
+
+  // 브라우저 닫기
+  browser.close();
+
+  // 검색결과 반환
+  return AllData;
+}
+``` 
+index.js 에서 곡 데이터를 다음과 같은 형식으로 크롤링 할 예정이다.
+
+``` JSON
+[
+  {
+    "id": "아이디 번호",
+    "song": "곡 제목",
+    "score": "점수 정보",
+    "crown": "왕관",
+    "play_times" : "플레이 횟수",
+  },
+]
+```
+우선 입력된 정보를 이용하여 동더히로바에 접속을 하게 만든다.
+
+``` js
+// 포탈로 이동
+await page.goto("https://donderhiroba.jp/login.php");
+
+// 다음 버튼을 클릭
+await page.evaluate(() => {
+  const nextBtn = document.querySelector("#login_form > div > img");
+  if (nextBtn) {
+    nextBtn.click();
+  }
+});
+
+// 예외 처리
+try {
+  // 해당 콘텐츠가 로드될 때까지 대기
+  await page.waitForSelector("#mail", { timeout: 2000 });
+} catch (error) {
+  console.log("에러 발생: " + error);
+  return null;
+}
+
+await page.type("input[id='mail']", keyword);
+await page.type("input[id='pass']", password);
+
+// 다음 버튼을 클릭
+await page.evaluate(() => {
+  const nextBtn = document.querySelector("#btn-idpw-login");
+  if (nextBtn) {
+    nextBtn.click();
+  }
+});
+
+// 예외 처리
+try {
+  // 해당 콘텐츠가 로드될 때까지 대기
+  await page.waitForSelector("#form_user1 > div", { timeout: 5000 });
+
+  // 다음 버튼을 클릭
+  await page.evaluate(() => {
+    const nextBtn = document.querySelector("#form_user1 > div > a > div > div");
+    if (nextBtn) {
+      nextBtn.click();
+    }
+  });
+} catch (error) {
+  console.log("에러 발생: " + error);
+}
+
+try {
+  // 해당 콘텐츠가 로드될 때까지 대기
+  await page.waitForSelector("#content > div.button_area.clearfix > div.mydon_button_area", { timeout: 5000 });
+} catch (error) {
+  console.log("로그인 에러");
+  return null;
+}
+
+``` 
+page.waitForSelector()를 이용하여 해당 시간 내에 css가 나타나지 않을 시 로그인 실패로 간주하였다.(timeout)
+
+#### 병렬 방식으로 크롤링하기
+
+모든 곡 정보를 수집하기 위해서 1000개 정도의 많은 페이지를 탐색해야하므로 빠른 처리 속도를 위하여 병렬 탐색을 이용하여 정보를 수집하였다.
+
+``` js
+let test = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+await Promise.all(test.map(async (index) => {
+  const pages = await browser.newPage()
+  await pages.setRequestInterception(true);
+
+  pages.on('request', (req) => {
     switch (req.resourceType()) {
       case 'stylesheet':
       case 'font':
@@ -688,164 +806,99 @@ async function openBrowser(keyword, password) {
     }
   });
 
-  // 포탈로 이동
-  await page.goto("https://donderhiroba.jp/login.php");
+  for (var i = 1; i <= 120; i++) {
+    if (index * 120 + i > 1115) { continue }
+    if (errors.indexOf(index * 120 + i) != -1) { continue }
 
-  // 다음 버튼을 클릭
-  await page.evaluate(() => {
-    const nextBtn = document.querySelector("#login_form > div > img");
-    if (nextBtn) {
-      nextBtn.click();
-    }
-  });
+    await pages.goto("https://donderhiroba.jp/score_detail.php?song_no=" + (index * 120 + i) + "&level=4");
+    try {
+      await pages.waitForSelector("#menu", { timeout: 5000 });
+      AllData.push(...(await crawlingData(index * 120 + i)));
+    } catch (error) { }
 
-  // 예외 처리
-  try {
-    // 해당 콘텐츠가 로드될 때까지 대기
-    await page.waitForSelector("#mail", { timeout: 2000 });
-
-  } catch (error) {
-    console.log("에러 발생: " + error);
-    return null;
-  }
-
-  await page.type("input[id='mail']", keyword);
-  await page.type("input[id='pass']", password);
-
-  // 다음 버튼을 클릭
-  await page.evaluate(() => {
-    const nextBtn = document.querySelector("#btn-idpw-login");
-    if (nextBtn) {
-      nextBtn.click();
-    }
-  });
-
-  // 예외 처리
-  try {
-    // 해당 콘텐츠가 로드될 때까지 대기
-    await page.waitForSelector("#form_user1 > div", { timeout: 5000 });
-
-    // 다음 버튼을 클릭
-    await page.evaluate(() => {
-      const nextBtn = document.querySelector("#form_user1 > div > a > div > div");
-      if (nextBtn) {
-        nextBtn.click();
-      }
-    });
-
-  } catch (error) {
-    console.log("에러 발생: " + error);
-  }
-
-  try {
-    // 해당 콘텐츠가 로드될 때까지 대기
-    await page.waitForSelector("#content > div.button_area.clearfix > div.mydon_button_area", { timeout: 5000 });
-  } catch (error) {
-    console.log("로그인 에러");
-    return null;
-  }
-
-  await page.close();
-
-  let test = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-  await Promise.all(test.map(async (index) => {
-    const pages = await browser.newPage()
-    await pages.setRequestInterception(true);
-
-    pages.on('request', (req) => {
-      switch (req.resourceType()) {
-        case 'stylesheet':
-        case 'font':
-        case 'image':
-          req.abort()
-          break;
-        default:
-          req.continue();
-          break;
-      }
-    });
-
-    for (var i = 1; i <= 120; i++) {
-      if (index * 120 + i > 1115) { continue }
-      if (errors.indexOf(index * 120 + i) != -1) { continue }
-
-      await pages.goto("https://donderhiroba.jp/score_detail.php?song_no=" + (index * 120 + i) + "&level=4");
+    if (ura.indexOf(index * 120 + i) != -1) {
+      await pages.goto("https://donderhiroba.jp/score_detail.php?song_no=" + (index * 120 + i) + "&level=5");
       try {
         await pages.waitForSelector("#menu", { timeout: 5000 });
-        AllData.push(...(await crawlingData(index * 120 + i)));
-      } catch (error) {
-        //console.log((index * 120 + i) + " : 으악 에러 발생: " + error);
-        //errors.push(i);
-      }
-
-      if (ura.indexOf(index * 120 + i) != -1) {
-        await pages.goto("https://donderhiroba.jp/score_detail.php?song_no=" + (index * 120 + i) + "&level=5");
-        try {
-          await pages.waitForSelector("#menu", { timeout: 5000 });
-          AllData.push(...(await crawlingData(index * 120 + i + 2000)));
-        } catch (error) {
-          //console.log((index * 120 + i) + " : 으악 에러 발생: " + error);
-          //errors.push(i);
-        }
-      }
+        AllData.push(...(await crawlingData(index * 120 + i + 2000)));
+      } catch (error) { }
     }
+  }
+}))
+```
+> 병렬 방식
 
-    async function crawlingData(tmp1) {
+페이지 별로 다음과 같이 정보를 크롤링 하였다.
 
-      const tmp2 = tmp1
-      // 호출된 브라우저 영역
-      const searchData = await pages.evaluate(() => {
+``` js
 
-        const song = document.querySelector('#content > div:nth-child(1) > div:nth-child(2) > ul > li > h2');
-        const score = document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.high_score > span');
-        const times = document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.stage_cnt > span');
+async function crawlingData(tmp1) {
+  const tmp2 = tmp1
+  // 호출된 브라우저 영역
+  const searchData = await pages.evaluate(() => {
 
-        let crown = 0; // Not play
+    const song = document.querySelector('#content > div:nth-child(1) > div:nth-child(2) > ul > li > h2');
+    const score = document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.high_score > span');
+    const times = document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.stage_cnt > span');
 
-        if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.dondaful_combo_cnt > span').textContent !== "0回") { crown = 4 } // 전량
-        else if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.full_combo_cnt > span').textContent !== "0回") { crown = 3 } // 풀콤
-        else if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.clear_cnt > span').textContent !== "0回") { crown = 2 } // 클리어
-        else if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.stage_cnt > span').textContent !== "0回") { crown = 1 } // 불클
+    let crown = 0; // Not play
 
-        return [
-          {
-            song: song.textContent,
-            score: score.textContent,
-            crown: crown,
-            play_times : times.textContent
-          },
-        ];
-      });
+    if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.dondaful_combo_cnt > span').textContent !== "0回") { crown = 4 } // 전량
+    else if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.full_combo_cnt > span').textContent !== "0回") { crown = 3 } // 풀콤
+    else if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.clear_cnt > span').textContent !== "0回") { crown = 2 } // 클리어
+    else if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.stage_cnt > span').textContent !== "0回") { crown = 1 } // 불클
 
-      return [
-        {
-          id: tmp2,
-          song: searchData[0].song,
-          score: Number(searchData[0].score.slice(0, -1)),
-          crown: searchData[0].crown,
-          play_times : Number(searchData[0].play_times.slice(0, -1))
-        },
-      ];
-    }
+    return [
+      {
+        song: song.textContent,
+        score: score.textContent,
+        crown: crown,
+        play_times : times.textContent
+      },
+    ];
+  });
 
-    console.log(index+": end")
-    await pages.close()
-  }));
-
-  /**
-  * 크롤링 함수
-  * @return {Array} 검색 결과
-  */
-
-  // 브라우저 닫기
-  browser.close();
-
-  // 검색결과 반환
-  return AllData;
+  return [
+    {
+      id: tmp2,
+      song: searchData[0].song,
+      score: Number(searchData[0].score.slice(0, -1)),
+      crown: searchData[0].crown,
+      play_times : Number(searchData[0].play_times.slice(0, -1))
+    },
+  ];
 }
+
 ``` 
-1000개 정도의 많은 페이지를 탐색해야하므로 중간에 병렬 탐색을 이용하여 정보를 수집한다.
+
+마지막으로 좀 더 빠른 처리 속도를 위하여 일부 불러오는 시간이 긴 것들은 생략하였다.
+
+``` js
+const browser = await puppeteer.launch({
+  headless: true,
+  args: [
+    "--no-sandbox",
+    "--disable-setuid-sandbox"
+  ]
+});
+// 브라우저 열기
+const page = await browser.newPage();
+await page.setRequestInterception(true);
+
+// 페이지 옵션
+page.on('request', (req) => {
+  switch (req.resourceType()) {
+    case 'stylesheet':
+    case 'font':
+    case 'image':
+      req.abort()
+      break;
+    default:
+      req.continue();
+      break;
+  }
+});
+```
 
 ### Heroku로 배포
 
@@ -882,20 +935,86 @@ const browser = await puppeteer.launch({
   });
 ``` 
 
+최종적으로 Heroku를 직접 배포하였다. (github에 프로젝트를 올리는 방식이랑 비슷하다.)
+
 ``` 
 git add .
 git commit -m '커밋 메세지'
 git push heroku master
 
 ``` 
-> Heroku 배포하기 (github에 프로젝트를 올리는 방식이랑 비슷하다.)
 
-## 5. 기타 
+#### Heroku로 배포 하면서
+
+Heroku를 배포 한 후에 다음과 같은 오류 메세지를 받았다.
+
++ H12 Error
+https://devcenter.heroku.com/articles/error-codes#h12-request-timeout
+
+에러같은 경우, HTTP request를 수행하는데 30초 이상 걸릴 시 발생한다. response 시간이 30초를 넘는다면 무조건 이 에러를 리턴하는 것을 확인하였다.
+
+이러한 에러를 피하기 위해서는 여러 HTTP request를 보내는 것이 있지만 Heroku에 할당된 메모리(500MB)가 부족하여 실행 할 수 없었다. 결국 어쩔 수 없이 30초 이내로 HTTP request를 수행하기 위해 index.js에서 연동 기능을 대거 축소 시킬 수 밖에 없었다.
+
+``` js
+let test = [0]
+
+  for (var i = 1; i <= 30; i++) {
+    {/* ...*/}
+  }
+``` 
+
+또한 에러 발생시 계속 연동 중인 화면이 나타나지 않도록 연동 초기 팝업으로 돌아오게 처리하였다.
+
+``` tsx
+const getData = (keyword: string, password: string) => {
+  setIsOnLoading(true);
+  loginerror(false);
+  setIsgood(false);
+    
+  fetch(`api/data?keyword=${keyword}&password=${password}`, {
+    headers: {
+      'Accept': 'application/json'
+    }
+  })
+    .then((res) => {
+      return res.json();
+      throw new Error(
+        `This is an HTTP error: The status is ${res.status}`
+      );
+    })
+    .then((data) => {
+      if (data === null) {loginerror(true);}
+      else {
+        songdata.map((item1: any, idx: number) => {
+          data.map((item2: any, idx: number) => {
+            if (item1.id === item2.id) {
+              item1.score = item2.score;
+              item1.crown = item2.crown;
+              item1.play_times = item2.play_times;
+            }
+          })
+        })
+        setIsgood(true);
+      }
+      setData(songdata);
+      setIsOnLoading(false);
+    }).catch((err) => {
+      console.log(err.message);
+      setIsOnLoading(false);
+    });
+};
+``` 
+
+## 5. 후기 
 
 처음으로 단독으로 서버랑 프런트 엔드 웹 개발을 하느라 고민하거나 배운 것이 많았던 시간이었다.
+추후 puppeteer 기능을 이용하여 서열표 정보를 스크린샷하여 다운로드하는 기능과 웹 자체의 로그인 기능을 추가할 계획에 있다. 
+배포 같은 경우 반쪽 짜리 성공이어서 만일 여유가 된다면 개인 서버로 배포를 할 계획이 있다.
 
 ## 6. 참고
 
-https://github.com/recordboy/scrap-sample
-https://jung-story.tistory.com/101
-https://jung-story.tistory.com/100?category=882480
+[[Express] Puppeteer, React, Express를 활용한 크롤러 만들기 및 Heroku에 배포하기](https://github.com/recordboy/scrap-sample)
+[Node.js (크롤링해온 정보(json 가공) react로 값 읽기)](https://jung-story.tistory.com/101)
+[Node.js (Node.js 를 이용한 웹 크롤링 하기 REST API )](https://jung-story.tistory.com/100?category=882480)
+[Heroku H12 Request timeout 문제](https://github.com/Bletcher-Project/bletcher_mix/issues/6)
+[SVG와 삼각 함수로 도넛 차트 만들어보기](https://evan-moon.github.io/2020/12/12/draw-arc-with-svg-clippath/)
