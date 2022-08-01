@@ -183,23 +183,19 @@ function App() {
     const scored_0 = Data_tmp.filter((item: any, index: number) => (item.k_score - item.score <= 500000 && item.k_score - item.score > 400000))
 
     React.useEffect(() => {
-      const radius = 30; // 차트의 반지름
-      const diameter = 2 * Math.PI * radius; // 차트의 둘레
+      const radius = 30; 
+      const diameter = 2 * Math.PI * radius;
       
       const colors = ['#37D6EC', '#8551D1', '#EA6A8F', '#E1AA02', '#6B70A2', '#99441F', '#D3D3D3'];
       const im_href = ["img/score_rank_8.png", "img/score_rank_7.png", "img/score_rank_6.png", "img/score_rank_5.png", "img/score_rank_4.png", "img/score_rank_3.png", "img/score_rank_2.png"];
       const dataset = [scored_6.length, scored_5.length, scored_4.length, scored_3.length, scored_2.length, scored_1.length, scored_0.length];
-
-      // 전체 데이터셋의 총 합
       const total = Data_tmp.length;
 
-      // 데이터셋의 누적 값
       const acc = dataset.reduce((arr, v, i) => {
         const last = arr[arr.length - 1];
         return [...arr, last + v];
       }, [0]);
 
-      // 프로퍼티 할당 노가다 시작...
       const svg = document.getElementById('svg');
       dataset.forEach((data, i) => {
         const ratio = data / total;
@@ -234,7 +230,6 @@ function App() {
   
           title.textContent = dataset[i] + " / " + total;
 
-
           im.setAttribute('href', im_href[i]);
           im.setAttribute('x',  String(xs));
           im.setAttribute('y',  String(ys));
@@ -245,7 +240,7 @@ function App() {
           svg.appendChild(circle);
           if((dataset[i] / total) >= 0.045) {svg.appendChild(im)};
         }
-        
+      
       });
     })
 
