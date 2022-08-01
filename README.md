@@ -44,6 +44,27 @@ npm run dev
 
 ### 프로젝트 초기화
 
+크게 서버용 파일을 상위로 하여 그 안에 사용자용 파일이 있는 형식으로 제작하였다.
+
+```
+mkdir my-app
+cd my-app 
+echo node_modules > .gitignore
+npm init -y
+npm install express nodemon concurrently
+
+create-react-app client --use-npm --template typescript
+```
+
+``` js
+"scripts": {
+  "start": "nodemon index.js",
+  "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+  "dev:server": "npm start",
+  "dev:client": "cd client && npm start"
+}
+```
+
 ### Front End
 
 사용자에게 보여줄 웹 화면은 크게 난이도 버튼하고 각 난이도 별의 정보 그리고 서열표 표로 나뉠 수 있다. 
@@ -333,84 +354,407 @@ React.useEffect(() => {
 서열표 표는 곡 정보를 토대로 표시하는 식으로 제작하였다.
 
 ``` typescript
-            return (
-                <div className="songs" key={index}>
-                    <div className="song_tmp" title = {(item.id < 4000) ? item.title + " > Play times : " + item.play_times : ""}>
-                        <div className="genre">
-                            {(128 & item.genre) ? <div className="namco" /> : ""}
-                            {(64 & item.genre) ? <div className="classical" /> : ""}
-                            {(32 & item.genre) ? <div className="var" /> : ""}
-                            {(16 & item.genre) ? <div className="games" /> : ""}
-                            {(8 & item.genre) ? <div className="vocal" /> : ""}
-                            {(4 & item.genre) ? <div className="ani" /> : ""}
-                            {(2 & item.genre) ? <div className="kids" /> : ""}
-                            {(1 & item.genre) ? <div className="pop" /> : ""}
-                        </div> {/* 장르 */}
-                        <div className="song_tmp2">
-                            <div className="name">
-                                <div className="name2">
-                                    <div className="Title_col"> {/* 제목 */}
-                                        {item.id > 10000 ? <div className="Title_tmp"> {item.title} </div> : item.id > 4000 ? <div className="Title_M"> {item.title} </div> : item.id > 2000 ? <div className="Title_Ura"> {item.title} </div> : <div className="Title"> {item.title} </div>}
-                                        <div className="do_jo">
-                                            {(item.do_jo === 1) ? <img className="do_jo_img" src="img/1dan.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 2) ? <img className="do_jo_img" src="img/2dan.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 3) ? <img className="do_jo_img" src="img/3dan.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 4) ? <img className="do_jo_img" src="img/4dan.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 5) ? <img className="do_jo_img" src="img/5dan.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 6) ? <img className="do_jo_img" src="img/6dan.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 7) ? <img className="do_jo_img" src="img/7dan.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 8) ? <img className="do_jo_img" src="img/8dan.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 9) ? <img className="do_jo_img" src="img/9dan.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 10) ? <img className="do_jo_img" src="img/10dan.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 11) ? <img className="do_jo_img" src="img/kuroto.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 12) ? <img className="do_jo_img" src="img/meijin.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 13) ? <img className="do_jo_img" src="img/chojin.png" width={'100%'} /> : ""}
-                                            {(item.do_jo === 14) ? <img className="do_jo_img" src="img/tatsujin.png" width={'100%'} /> : ""}
-                                        </div> {/* 단위 과제곡 */}
-                                    </div>
-                                    <div className="Subtitle_col"> {/* 부제목 */}
-                                        <div className={item.title.length >= 20 ? "Subtitle_long" : item.title.length >= 11 ? "Subtitle_mid" : "Subtitle"}> {item.sub_title_kor}</div>
-                                        <div className="Bottom_Right"> {item.notice & 4 ? <div className='individual' /> : ""}{item.notice & 2 ? <div className='first_play' /> : ""}{item.notice & 1 ? <div className='full_combo' /> : ""} </div> {/* 기타 항목 */}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="my_data"> {/* 플레이어의 기록 */}
-                                <div className="crown">
-                                    {(item.crown === 4) ? <img src="img/crown4.png" width={'100%'} /> : ""}
-                                    {(item.crown === 3) ? <img src="img/crown3.png" width={'100%'} /> : ""}
-                                    {(item.crown === 2) ? <img src="img/crown2.png" width={'100%'} /> : ""}
-                                    {(item.crown === 1) ? <img src="img/crown1.png" width={'100%'} /> : ""}
-                                </div> {/* 왕관 */}
-                                <div className={(item.k_score <= item.score) ? "score score_6" : ((item.k_score - item.score <= 50000) ? "score score_5" : ((item.k_score - item.score <= 100000) ? "score score_4" : ((item.k_score - item.score <= 200000) ? "score score_3" : ((item.k_score - item.score <= 300000) ? "score score_2" : (item.k_score - item.score <= 400000) ? "score score_1" : (item.k_score - item.score <= 500000) ? "score score_0" : "score score_none"))))}>
-                                    {(item.crown !== 0) ? item.score : ""}
-                                </div> {/* 점수 */}
-                                <div className="score_icon">
-                                    {(item.k_score <= item.score) ? <img src="img/score_rank_8.png" width={'100%'} /> : ""}
-                                    {(item.k_score > item.score && item.k_score - item.score <= 50000) ? <img src="img/score_rank_7.png" width={'100%'} /> : ""}
-                                    {(item.k_score - item.score > 50000 && item.k_score - item.score <= 100000) ? <img src="img/score_rank_6.png" width={'100%'} /> : ""}
-                                    {(item.k_score - item.score > 100000 && item.k_score - item.score <= 200000) ? <img src="img/score_rank_5.png" width={'100%'} /> : ""}
-                                    {(item.k_score - item.score > 200000 && item.k_score - item.score <= 300000) ? <img src="img/score_rank_4.png" width={'100%'} /> : ""}
-                                    {(item.k_score - item.score > 300000 && item.k_score - item.score <= 400000) ? <img src="img/score_rank_3.png" width={'100%'} /> : ""}
-                                    {(item.k_score - item.score > 400000 && item.k_score - item.score <= 500000) ? <img src="img/score_rank_2.png" width={'100%'} /> : ""}
-                                </div> {/* 극 */}
-                            </div>
+return (
+    <div className="songs" key={index}>
+        <div className="song_tmp" title = {(item.id < 4000) ? item.title + " > Play times : " + item.play_times : ""}>
+            <div className="genre">
+                {(128 & item.genre) ? <div className="namco" /> : ""}
+                {(64 & item.genre) ? <div className="classical" /> : ""}
+                {(32 & item.genre) ? <div className="var" /> : ""}
+                {(16 & item.genre) ? <div className="games" /> : ""}
+                {(8 & item.genre) ? <div className="vocal" /> : ""}
+                {(4 & item.genre) ? <div className="ani" /> : ""}
+                {(2 & item.genre) ? <div className="kids" /> : ""}
+                {(1 & item.genre) ? <div className="pop" /> : ""}
+            </div> {/* 장르 */}
+            <div className="song_tmp2">
+                <div className="name">
+                    <div className="name2">
+                        <div className="Title_col"> {/* 제목 */}
+                            {item.id > 10000 ? <div className="Title_tmp"> {item.title} </div> : item.id > 4000 ? <div className="Title_M"> {item.title} </div> : item.id > 2000 ? <div className="Title_Ura"> {item.title} </div> : <div className="Title"> {item.title} </div>}
+                            <div className="do_jo">
+                                {(item.do_jo === 1) ? <img className="do_jo_img" src="img/1dan.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 2) ? <img className="do_jo_img" src="img/2dan.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 3) ? <img className="do_jo_img" src="img/3dan.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 4) ? <img className="do_jo_img" src="img/4dan.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 5) ? <img className="do_jo_img" src="img/5dan.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 6) ? <img className="do_jo_img" src="img/6dan.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 7) ? <img className="do_jo_img" src="img/7dan.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 8) ? <img className="do_jo_img" src="img/8dan.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 9) ? <img className="do_jo_img" src="img/9dan.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 10) ? <img className="do_jo_img" src="img/10dan.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 11) ? <img className="do_jo_img" src="img/kuroto.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 12) ? <img className="do_jo_img" src="img/meijin.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 13) ? <img className="do_jo_img" src="img/chojin.png" width={'100%'} /> : ""}
+                                {(item.do_jo === 14) ? <img className="do_jo_img" src="img/tatsujin.png" width={'100%'} /> : ""}
+                            </div> {/* 단위 과제곡 */}
+                        </div>
+                        <div className="Subtitle_col"> {/* 부제목 */}
+                            <div className={item.title.length >= 20 ? "Subtitle_long" : item.title.length >= 11 ? "Subtitle_mid" : "Subtitle"}> {item.sub_title_kor}</div>
+                            <div className="Bottom_Right"> {item.notice & 4 ? <div className='individual' /> : ""}{item.notice & 2 ? <div className='first_play' /> : ""}{item.notice & 1 ? <div className='full_combo' /> : ""} </div> {/* 기타 항목 */}
                         </div>
                     </div>
                 </div>
-            )
+                <div className="my_data"> {/* 플레이어의 기록 */}
+                    <div className="crown">
+                        {(item.crown === 4) ? <img src="img/crown4.png" width={'100%'} /> : ""}
+                        {(item.crown === 3) ? <img src="img/crown3.png" width={'100%'} /> : ""}
+                        {(item.crown === 2) ? <img src="img/crown2.png" width={'100%'} /> : ""}
+                        {(item.crown === 1) ? <img src="img/crown1.png" width={'100%'} /> : ""}
+                    </div> {/* 왕관 */}
+                    <div className={(item.k_score <= item.score) ? "score score_6" : ((item.k_score - item.score <= 50000) ? "score score_5" : ((item.k_score - item.score <= 100000) ? "score score_4" : ((item.k_score - item.score <= 200000) ? "score score_3" : ((item.k_score - item.score <= 300000) ? "score score_2" : (item.k_score - item.score <= 400000) ? "score score_1" : (item.k_score - item.score <= 500000) ? "score score_0" : "score score_none"))))}>
+                                    {(item.crown !== 0) ? item.score : ""}
+                    </div> {/* 점수 */}
+                    <div className="score_icon">
+                        {(item.k_score <= item.score) ? <img src="img/score_rank_8.png" width={'100%'} /> : ""}
+                        {(item.k_score > item.score && item.k_score - item.score <= 50000) ? <img src="img/score_rank_7.png" width={'100%'} /> : ""}
+                        {(item.k_score - item.score > 50000 && item.k_score - item.score <= 100000) ? <img src="img/score_rank_6.png" width={'100%'} /> : ""}
+                        {(item.k_score - item.score > 100000 && item.k_score - item.score <= 200000) ? <img src="img/score_rank_5.png" width={'100%'} /> : ""}
+                        {(item.k_score - item.score > 200000 && item.k_score - item.score <= 300000) ? <img src="img/score_rank_4.png" width={'100%'} /> : ""}
+                        {(item.k_score - item.score > 300000 && item.k_score - item.score <= 400000) ? <img src="img/score_rank_3.png" width={'100%'} /> : ""}
+                        {(item.k_score - item.score > 400000 && item.k_score - item.score <= 500000) ? <img src="img/score_rank_2.png" width={'100%'} /> : ""}
+                    </div> {/* 극 */}
+                </div>
+            </div>
+        </div>
+    </div>
+)
 ```
 
 ### 연동 기능
 
+연동기능은 puppeteer를 이용하였다. 우선 연동시킬 계정 이메일과 비밀번호를 서버로 보내기 위하여 다음과 같이 작성해준다.
 
+``` typescript
+
+import React, { useState } from "react";
+
+const SearchForm = (props: { getData: any }) => {
+  const { getData } = props;
+  const [Id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const [isinputerror, setinputerror] = useState(false)
+
+  return (
+    <div>
+      <div className="form">
+        <div className="email_form">
+          <div> 이메일 </div>
+          <input
+            type="text"
+            className="form-text"
+            onChange={(e: any) => {
+              setId(e.target.value);
+            }}
+          />
+        </div>
+        <div className="password_form">
+          <div> 비밀번호 </div>
+          <input
+            type="password"
+            className="form-text"
+            onChange={(e: any) => {
+              setPassword(e.target.value);
+            }}
+          />
+        </div>
+        <button
+          type="button"
+          className="form-btn"
+          onClick={() => {
+            setinputerror(false)
+            if (Id && password) {
+              getData(Id, password);
+            }
+            else { setinputerror(true) }
+          }}
+        >
+          search
+        </button>
+      </div>
+      {isinputerror ? <div className = "popup_error"> 이메일과 비밀번호를 입력해주세요 </div> : ""}
+    </div>
+  );
+};
+
+export default SearchForm;
+
+``` 
+
+``` typescript
+
+const getData = (keyword: string, password: string) => {
+setIsOnLoading(true);
+loginerror(false);
+setIsgood(false);
+//console.log("검색 키워드: " + keyword);
+fetch(`api/data?keyword=${keyword}&password=${password}`, {
+    headers: {
+    'Accept': 'application/json'
+    }
+})
+    .then((res) => {
+        return res.json();
+        throw new Error(
+          `This is an HTTP error: The status is ${res.status}`
+        );
+      })
+    .then((data) => {
+
+        if (data === null) {
+          loginerror(true);
+        }
+        else {
+          songdata.map((item1: any, idx: number) => {
+            data.map((item2: any, idx: number) => {
+              if (item1.id === item2.id) {
+                item1.score = item2.score;
+                item1.crown = item2.crown;
+                item1.play_times = item2.play_times;
+              }
+            })
+          })
+          setIsgood(true);
+        }
+
+        setData(songdata);
+        setIsOnLoading(false);
+        //console.log(data);
+    }).catch((err) => {
+        console.log(err.message);
+        setIsOnLoading(false);
+    });
+    ;
+};
+
+``` 
+
+연동기능은 puppeteer를 이용하여 아래 내용을 추가해 주었다.
+
+``` js
+
+// puppeteer 모듈 불러오기
+const puppeteer = require("puppeteer");
+
+/**
+ * 브라우저 오픈 함수
+ * @param {string} keyword 검색 키워드
+ * @return {Array} 검색 결과
+ */
+async function openBrowser(keyword, password) {
+
+  let AllData = [];
+  let ura = [9, 15, 45, 49, 60, 73, 80, 92, 95, 100, 109, 118, 135, 139, 140, 149, 150, 153, 154, 156, 160, 163, 164, 178, 181, 184, 187, 200, 202, 203, 218, 221, 222, 231, 253, 254, 256, 264, 266, 270, 271, 272, 273, 274, 275, 276, 277, 278, 283, 284, 309, 310, 324, 348, 357, 361, 366, 368, 371, 399, 400, 402, 403, 405, 414, 417, 422, 425, 433, 447, 448, 451, 470, 478, 480, 481, 482, 487, 493, 504, 506, 507, 511, 519, 520, 537, 539, 551, 553, 579, 580, 606, 626, 645, 646, 648, 652, 664, 671, 676, 681, 683, 689, 700, 711, 716, 717, 721, 730, 735, 736, 741, 771, 775, 776, 793, 795, 804, 811, 816, 819, 824, 831, 834, 842, 845, 856, 866, 868, 876, 882, 884, 898, 911, 920, 926, 936, 938, 951, 954, 956, 958, 959, 960, 972, 981, 993, 997, 1009, 1020, 1027, 1035, 1043, 1046, 1058, 1067, 1072, 1080, 1082, 1084, 1096, 1097, 1111, 1112, 1113];
+  let errors = [4, 23, 24, 29, 30, 46, 50, 54, 57, 75, 76, 77, 78, 102, 104, 119, 129, 130, 143, 145, 147, 158, 162, 165, 170, 172, 174, 175, 176, 185, 188, 189, 192, 195, 198, 199, 201, 206, 216, 217, 229, 232, 234, 235, 240, 244, 249, 258, 262, 263, 289, 292, 295, 320, 326, 327, 328, 329, 330, 334, 339, 369, 370, 373, 376, 379, 382, 409, 424, 439, 457, 473, 475, 476, 485, 486, 490, 494, 508, 509, 521, 522, 528, 529, 531, 532, 533, 542, 562, 563, 564, 581, 582, 583, 584, 589, 590, 597, 598, 599, 600, 601, 602, 603, 619, 620, 622, 633, 634, 636, 638, 643, 655, 656, 657, 658, 661, 662, 667, 669, 670, 674, 690, 691, 692, 708, 710, 712, 718, 729, 731, 743, 752, 768, 769, 772, 782, 783, 787, 788, 789, 791, 802, 806, 807, 810, 812, 825, 827, 829, 830, 832, 836, 837, 838, 847, 848, 853, 863, 899, 900, 901, 902, 903, 904, 912, 1001, 1025, 1107];
+  
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ]
+  });
+  // 브라우저 열기
+  const page = await browser.newPage();
+  await page.setRequestInterception(true);
+
+  // 페이지 옵션
+  page.on('request', (req) => {
+    switch (req.resourceType()) {
+      case 'stylesheet':
+      case 'font':
+      case 'image':
+        req.abort()
+        break;
+      default:
+        req.continue();
+        break;
+    }
+  });
+
+  // 포탈로 이동
+  await page.goto("https://donderhiroba.jp/login.php");
+
+  // 다음 버튼을 클릭
+  await page.evaluate(() => {
+    const nextBtn = document.querySelector("#login_form > div > img");
+    if (nextBtn) {
+      nextBtn.click();
+    }
+  });
+
+  // 예외 처리
+  try {
+    // 해당 콘텐츠가 로드될 때까지 대기
+    await page.waitForSelector("#mail", { timeout: 2000 });
+
+  } catch (error) {
+    console.log("에러 발생: " + error);
+    return null;
+  }
+
+  await page.type("input[id='mail']", keyword);
+  await page.type("input[id='pass']", password);
+
+  // 다음 버튼을 클릭
+  await page.evaluate(() => {
+    const nextBtn = document.querySelector("#btn-idpw-login");
+    if (nextBtn) {
+      nextBtn.click();
+    }
+  });
+
+  // 예외 처리
+  try {
+    // 해당 콘텐츠가 로드될 때까지 대기
+    await page.waitForSelector("#form_user1 > div", { timeout: 5000 });
+
+    // 다음 버튼을 클릭
+    await page.evaluate(() => {
+      const nextBtn = document.querySelector("#form_user1 > div > a > div > div");
+      if (nextBtn) {
+        nextBtn.click();
+      }
+    });
+
+  } catch (error) {
+    console.log("에러 발생: " + error);
+  }
+
+  try {
+    // 해당 콘텐츠가 로드될 때까지 대기
+    await page.waitForSelector("#content > div.button_area.clearfix > div.mydon_button_area", { timeout: 5000 });
+  } catch (error) {
+    console.log("로그인 에러");
+    return null;
+  }
+
+  await page.close();
+
+  let test = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+  await Promise.all(test.map(async (index) => {
+    const pages = await browser.newPage()
+    await pages.setRequestInterception(true);
+
+    pages.on('request', (req) => {
+      switch (req.resourceType()) {
+        case 'stylesheet':
+        case 'font':
+        case 'image':
+          req.abort()
+          break;
+        default:
+          req.continue();
+          break;
+      }
+    });
+
+    for (var i = 1; i <= 120; i++) {
+      if (index * 120 + i > 1115) { continue }
+      if (errors.indexOf(index * 120 + i) != -1) { continue }
+
+      await pages.goto("https://donderhiroba.jp/score_detail.php?song_no=" + (index * 120 + i) + "&level=4");
+      try {
+        await pages.waitForSelector("#menu", { timeout: 5000 });
+        AllData.push(...(await crawlingData(index * 120 + i)));
+      } catch (error) {
+        //console.log((index * 120 + i) + " : 으악 에러 발생: " + error);
+        //errors.push(i);
+      }
+
+      if (ura.indexOf(index * 120 + i) != -1) {
+        await pages.goto("https://donderhiroba.jp/score_detail.php?song_no=" + (index * 120 + i) + "&level=5");
+        try {
+          await pages.waitForSelector("#menu", { timeout: 5000 });
+          AllData.push(...(await crawlingData(index * 120 + i + 2000)));
+        } catch (error) {
+          //console.log((index * 120 + i) + " : 으악 에러 발생: " + error);
+          //errors.push(i);
+        }
+      }
+    }
+
+    async function crawlingData(tmp1) {
+
+      const tmp2 = tmp1
+      // 호출된 브라우저 영역
+      const searchData = await pages.evaluate(() => {
+
+        const song = document.querySelector('#content > div:nth-child(1) > div:nth-child(2) > ul > li > h2');
+        const score = document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.high_score > span');
+        const times = document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.stage_cnt > span');
+
+        let crown = 0; // Not play
+
+        if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.dondaful_combo_cnt > span').textContent !== "0回") { crown = 4 } // 전량
+        else if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.full_combo_cnt > span').textContent !== "0回") { crown = 3 } // 풀콤
+        else if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.clear_cnt > span').textContent !== "0回") { crown = 2 } // 클리어
+        else if (document.querySelector('#content > div.scoreDetail > div.scoreDetailTable > div.stage_cnt > span').textContent !== "0回") { crown = 1 } // 불클
+
+        return [
+          {
+            song: song.textContent,
+            score: score.textContent,
+            crown: crown,
+            play_times : times.textContent
+          },
+        ];
+      });
+
+      return [
+        {
+          id: tmp2,
+          song: searchData[0].song,
+          score: Number(searchData[0].score.slice(0, -1)),
+          crown: searchData[0].crown,
+          play_times : Number(searchData[0].play_times.slice(0, -1))
+        },
+      ];
+    }
+
+    console.log(index+": end")
+    await pages.close()
+  }));
+
+  /**
+  * 크롤링 함수
+  * @return {Array} 검색 결과
+  */
+
+  // 브라우저 닫기
+  browser.close();
+
+  // 검색결과 반환
+  return AllData;
+}
+``` 
+1000개 정도의 많은 페이지를 탐색해야하므로 중간에 병렬 탐색을 이용하여 정보를 수집한다.
 
 ### Heroku로 배포
 
+이젠 Heroku로 배포하자 터미널에서 다음과 같은 명령어를 입력하였다.
 
+``` 
+git init
 
+heroku login
+
+heroku create 프로젝트이름
+git remote -v
+
+heroku buildpacks:clear
+heroku buildpacks:add --index 1 https://github.com/jontewks/puppeteer-heroku-buildpack
+heroku buildpacks:add --index 1 heroku/nodejs
+
+git add .
+git commit -m '커밋 메세지'
+git push heroku master
+
+``` 
 ## 5. 기타 
 
-
+처음으로 단독으로 서버랑 프런트 엔드 웹 개발을 하느라 고민하거나 배운 것이 많았던 시간이었다.
 
 ## 6. 참고
 
