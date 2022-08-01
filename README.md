@@ -1,7 +1,7 @@
 # 태고 서열표 웹
 
-![](https://github.com/kongsanggun/Taiko-Info/readme_img/1.png)
-![](https://github.com/kongsanggun/Taiko-Info/readme_img/2.png)
+![](https://github.com/kongsanggun/Taiko-Info/blob/master/readme_img/1.png)
+![](https://github.com/kongsanggun/Taiko-Info/blob/master/readme_img/2.png)
 
 > 화면 미리보기
 
@@ -11,11 +11,11 @@
 + [제작 동기](https://github.com/kongsanggun/Taiko-Info#2-%EC%A0%9C%EC%9E%91-%EB%8F%99%EA%B8%B0)
 + [사용 언어](https://github.com/kongsanggun/Taiko-Info#3-%EC%82%AC%EC%9A%A9-%EC%96%B8%EC%96%B4)
 + [제작 순서](https://github.com/kongsanggun/Taiko-Info#4-%EC%A0%9C%EC%9E%91-%EC%88%9C%EC%84%9C)
-	+ [프로젝트 만들기 & 초기화](https://github.com/kongsanggun/Taiko-Info#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%B4%88%EA%B8%B0%ED%99%94)
-	+ [사용자 화면 만들기](https://github.com/kongsanggun/Taiko-Info#front-end)
+	+ [프로젝트 만들기 & 초기화](https://github.com/kongsanggun/Taiko-Info#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EB%A7%8C%EB%93%A4%EA%B8%B0--%EC%B4%88%EA%B8%B0%ED%99%94)
+	+ [사용자 화면 만들기](https://github.com/kongsanggun/Taiko-Info#%EC%82%AC%EC%9A%A9%EC%9E%90-%ED%99%94%EB%A9%B4-%EB%A7%8C%EB%93%A4%EA%B8%B0)
 	+ [연동 기능](https://github.com/kongsanggun/Taiko-Info#%EC%97%B0%EB%8F%99-%EA%B8%B0%EB%8A%A5)
 	+ [Heroku로 배포](https://github.com/kongsanggun/Taiko-Info#heroku%EB%A1%9C-%EB%B0%B0%ED%8F%AC)
-+ [기타 후기](https://github.com/kongsanggun/Taiko-Info#5-%EA%B8%B0%ED%83%80)
++ [기타 후기](https://github.com/kongsanggun/Taiko-Info#5-%ED%9B%84%EA%B8%B0)
 + [참조 링크](https://github.com/kongsanggun/Taiko-Info#6-%EC%B0%B8%EA%B3%A0)
 
 ## 1. 링크 및 실행 방법
@@ -43,9 +43,9 @@ npm run dev
 
 아케이드 리듬게임으로 서비스되고 있는 태고의 달인이라는 게임의 비공식 서열표를 이전 포토샵으로 수작업으로 수정하는 것을 좀 더 웹을 통하여 자동적으로 반영이 되는 방식으로 개발을 하였다. 또한 사용자가 일일히 각 곡의 성적을 체크하는 것이 아닌 자동적으로 곡의 기록을 표시해 주는 연동 서비스를 추가하였다.
 
-![](https://github.com/kongsanggun/Taiko-Info/readme_img/3.png)
-![](https://github.com/kongsanggun/Taiko-Info/readme_img/4.png)
-![](https://github.com/kongsanggun/Taiko-Info/readme_img/5.png)
+![](https://github.com/kongsanggun/Taiko-Info/blob/master/readme_img/3.png)
+![](https://github.com/kongsanggun/Taiko-Info/blob/master/readme_img/4.png)
+![](https://github.com/kongsanggun/Taiko-Info/blob/master/readme_img/5.png)
 
 > 연동 서비스 적용 예시
 
@@ -1013,8 +1013,8 @@ const getData = (keyword: string, password: string) => {
 
 ## 6. 참고
 
-[[Express] Puppeteer, React, Express를 활용한 크롤러 만들기 및 Heroku에 배포하기](https://github.com/recordboy/scrap-sample)
-[Node.js (크롤링해온 정보(json 가공) react로 값 읽기)](https://jung-story.tistory.com/101)
-[Node.js (Node.js 를 이용한 웹 크롤링 하기 REST API )](https://jung-story.tistory.com/100?category=882480)
-[Heroku H12 Request timeout 문제](https://github.com/Bletcher-Project/bletcher_mix/issues/6)
-[SVG와 삼각 함수로 도넛 차트 만들어보기](https://evan-moon.github.io/2020/12/12/draw-arc-with-svg-clippath/)
++ [[Express] Puppeteer, React, Express를 활용한 크롤러 만들기 및 Heroku에 배포하기](https://github.com/recordboy/scrap-sample)
++ [Node.js (크롤링해온 정보(json 가공) react로 값 읽기)](https://jung-story.tistory.com/101)
++ [Node.js (Node.js 를 이용한 웹 크롤링 하기 REST API )](https://jung-story.tistory.com/100?category=882480)
++ [Heroku H12 Request timeout 문제](https://github.com/Bletcher-Project/bletcher_mix/issues/6)
++ [SVG와 삼각 함수로 도넛 차트 만들어보기](https://evan-moon.github.io/2020/12/12/draw-arc-with-svg-clippath/)
